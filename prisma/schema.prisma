@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                          String        @id @default(uuid())
+  user_type                   String
+  name                        String
+  gender                      String
+  age                         Int
+  location                    String
+  latitude                    Float?
+  longitude                   Float?
+  profile_image               String
+  face                        String?
+  skills                      Json?
+  anything_but_professional   String?
+  skill_type                  String
+  short_bio                   String
+  business_card               Json?
+  certificates                Json?
+  work_experience             Json?
+  mobile_number               String        @unique
+  createdAt                   DateTime      @default(now())
+  updatedAt                   DateTime      @updatedAt
+
+  // NEW FIELDS
+  avatar                      String?       // for chat UI
+  status                      String?       // e.g. "On", "Pause", "Off"
+
+  // RELATIONS
+  // Tasks owned by this user (personal tasks OR tasks assigned *to* this user)
+  tasks                       Task[]        @relation("UserTasks")
+    expoPushToken     String? 
+  // Tasks this user has assigned *to others*
+  assignedTasks               Task[]        @relation("AssignedByTasks")
+  likesGiven                  Like[]        @relation("likesGiven")
+  likesReceived               Like[]        @relation("likesReceived")
+  matchesAsUser1              Match[]       @relation("matchesUser1")
+  matchesAsUser2              Match[]       @relation("matchesUser2")
+  // Corrected relations for ChatMessage
+  sentMessages                ChatMessage[] @relation("SentMessages")
+  receivedMessages            ChatMessage[] @relation("ReceivedMessages")
+
+  @@map("users")
+}
+
+model Task {
+  id            String    @id @default(uuid())
+  // The user who *has* this task on their profile / is responsible for it.
+  // For personal tasks, this is the creator. For assigned tasks, this is the recipient.
+  userId        String
+  // The user who *assigned* this task. Null for personal tasks.
+  assignedById  String?
+  title         String
+  description   String?
+  // Changed date to DateTime for proper handling, will store as Date only for simplicity
+  date          DateTime  @db.Date // Store only date without time
+  status        String    @default("pending") // e.g., "pending", "in-progress", "completed", "cancelled"
+  taskType      String    @default("personal") // "personal", "assigned"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User?     @relation("UserTasks", fields: [userId], references: [id])
+  assignedBy    User?     @relation("AssignedByTasks", fields: [assignedById], references: [id])
+
+  @@index([userId])
+  @@index([assignedById])
+  @@map("tasks")
+}
+
+model OTP {
+  id            String    @id @default(uuid())
+  mobile_number String
+  otp           String
+  createdAt     DateTime  @default(now())
+  verified      Boolean   @default(false)
+
+  @@index([mobile_number])
+  @@map("otps")
+}
+
+model Like {
+  id          String    @id @default(uuid())
+  fromUserId  String
+  toUserId    String
+  createdAt   DateTime  @default(now())
+
+  fromUser    User      @relation("likesGiven", fields: [fromUserId], references: [id])
+  toUser      User      @relation("likesReceived", fields: [toUserId], references: [id])
+
+  @@unique([fromUserId, toUserId])
+  @@map("likes")
+}
+model Match {
+  id                String    @id @default(cuid())
+  user1Id           String
+  user2Id           String
+  approvedByUser1   Boolean   @default(false)
+  approvedByUser2   Boolean   @default(false)
+  matchedAt         DateTime?
+
+  user1             User      @relation("matchesUser1", fields: [user1Id], references: [id])
+  user2             User      @relation("matchesUser2", fields: [user2Id], references: [id])
+  // ADD THIS LINE: Inverse relation from Match to ChatMessage
+  chatMessages      ChatMessage[] // This establishes the relation. You can name it 'messages' or 'chatMessages'
+                                  // I recommend 'chatMessages' for clarity, then adjust your query.
+
+  @@unique([user1Id, user2Id])
+  @@map("matches")
+}
+
+
+model ChatMessage {
+  id          String   @id @default(uuid())
+  matchId     String
+  // Add a direct relation field to the Match model
+  match       Match    @relation(fields: [matchId], references: [id]) // This connects to the Match model
+  senderId    String
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId  String
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  message     String
+  createdAt   DateTime @default(now())
+
+  @@index([matchId])
+  @@index([senderId])
+  @@index([receiverId])
+}
