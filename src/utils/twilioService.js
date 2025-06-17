@@ -1,7 +1,7 @@
 // utils/twilioService.js
 const twilio = require("twilio");
 
-const USE_TWILIO = process.env.USE_TWILIO === "true";
+const USE_TWILIO = false;
 
 let client;
 if (USE_TWILIO) {
