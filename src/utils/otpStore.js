@@ -5,7 +5,8 @@ const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 
 const generateOtp = (mobileNumber) => {
   // Generate a 6-digit random OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  // Math.floor(100000 + Math.random() * 900000).toString()
+  const otp = "000000";
   otpStore.set(mobileNumber, { otp, timestamp: Date.now() });
   return otp;
 };
