@@ -854,6 +854,7 @@ router.get("/:userId", async (req, res) => {
         gender: otherUser.gender,
         profile_image: otherUser.profile_image || otherUser.avatar, // Prefer profile_image, fallback to avatar
         avatar: otherUser.avatar, // Include avatar explicitly if needed
+        business_card: otherUser.business_card,
         title:
           otherUser.business_card?.role ||
           otherUser.short_bio ||
