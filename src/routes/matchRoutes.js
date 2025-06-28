@@ -756,6 +756,7 @@ router.post("/approve", async (req, res) => {
       gender: otherUserInMatch.gender,
       profile_image: otherUserInMatch.profile_image || otherUserInMatch.avatar, // Prefer profile_image, fallback to avatar
       avatar: otherUserInMatch.avatar, // Include avatar explicitly if needed
+      business_card: otherUserInMatch.business_card,
       title:
         otherUserInMatch.business_card?.role ||
         otherUserInMatch.short_bio ||
