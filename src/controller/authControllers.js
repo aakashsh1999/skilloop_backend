@@ -94,6 +94,7 @@ exports.register = async (req, res) => {
   try {
     const newUser = await prisma.user.create({
       data: {
+        id: userData.id || undefined,
         mobile_number,
         user_type: userData.user_type,
         name: userData.name,
