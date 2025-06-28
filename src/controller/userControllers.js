@@ -165,18 +165,6 @@ exports.getRecommendedUsers = async (req, res) => {
       where: {
         id: { not: currentUserId },
       },
-      select: {
-        id: true,
-        name: true,
-        gender: true,
-        age: true,
-        location: true,
-        latitude: true,
-        longitude: true,
-        profile_image: true,
-        short_bio: true,
-        skill_type: true,
-      },
     });
 
     const likedUserIds = (
