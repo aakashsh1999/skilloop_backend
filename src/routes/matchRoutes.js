@@ -866,6 +866,7 @@ router.get("/:userId", async (req, res) => {
         matchedAt: match.matchedAt,
       };
     });
+    console.log(formattedMatches, "sfsafds");
 
     res.status(200).json(formattedMatches);
   } catch (error) {
