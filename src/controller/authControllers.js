@@ -96,6 +96,7 @@ exports.register = async (req, res) => {
       data: {
         id: userData.id || undefined,
         mobile_number,
+        email: userData.email || "",
         user_type: userData.user_type,
         name: userData.name,
         gender: userData.gender,
