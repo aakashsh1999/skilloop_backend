@@ -9,6 +9,7 @@ const likeRoutes = require("./routes/likeRoutes.js");
 const taskRoutes = require("./routes/taskRoutes.js");
 const chatRoutes = require("./routes/chatRoutes.js");
 const matchRoutes = require("./routes/matchRoutes.js");
+const searchRoutes = require("./routes/searchRoutes.js");
 
 const app = express();
 
@@ -36,5 +37,6 @@ app.use("/api/likes", likeRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/chats", chatRoutes); // For historical messages
 app.use("/api/tasks", taskRoutes);
+app.use("/api/search", searchRoutes);
 
 module.exports = app;

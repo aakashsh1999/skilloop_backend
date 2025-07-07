@@ -134,3 +134,8 @@ model ChatMessage {
   @@index([senderId])
   @@index([receiverId])
 }
+
+model Skill {
+  id         String       @id @default(uuid())
+  name       String       @unique
+}
